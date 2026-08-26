@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./page.module.css";
 
 export default function LoginPage() {
 
@@ -76,20 +77,13 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{
-            minHeight: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            background: "#111",
-            color: "white"
-        }}>
+        <div className={styles.container}>
 
             <h1>Login</h1>
 
-            <form onSubmit={handleLogin} style={{ width: "350px", padding: "30px", background: "#222", borderRadius: "10px" }}>
+            <form onSubmit={handleLogin} className={styles.form}>
 
-                <div style={{ marginBottom: "15px" }}>
+                <div className={styles.field}>
                     <label>Email</label>
 
                     <input
@@ -100,15 +94,11 @@ export default function LoginPage() {
                         }
                         placeholder="Enter email"
                         required
-                        style={{
-                            display: "block",
-                            width: "100%",
-                            padding: "10px"
-                        }}
+                        className={styles.input}
                     />
                 </div>
 
-                <div style={{ marginBottom: "15px" }}>
+                <div className={styles.field}>
                     <label>Password</label>
 
                     <input
@@ -119,16 +109,12 @@ export default function LoginPage() {
                         }
                         placeholder="Enter password"
                         required
-                        style={{
-                            display: "block",
-                            width: "100%",
-                            padding: "10px"
-                        }}
+                        className={styles.input}
                     />
                 </div>
 
                 {error && (
-                    <p style={{ color: "red" }}>
+                    <p className={styles.error}>
                         {error}
                     </p>
                 )}
@@ -136,15 +122,7 @@ export default function LoginPage() {
                 <button
                     type="submit"
                     disabled={loading}
-                    style={{
-                        width: "100%",
-                        padding: "12px",
-                        background: "#25d366",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer"
-                    }}
+                    className={styles.button}
                 >
                     {loading
                         ? "Logging in..."
@@ -154,7 +132,7 @@ export default function LoginPage() {
 
                 <p>
                     Don't have an account?{" "}
-                    <a href="/register" style={{ color: "#25d366", cursor: "pointer" }}>
+                    <a href="/register" className={styles.link}>
                         Register
                     </a>
                 </p>
