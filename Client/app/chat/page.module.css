@@ -1,0 +1,171 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background: #111;
+    color: white;
+}
+
+.sidebar {
+    width: 270px;
+    border-right: 1px solid #555;
+    padding: 20px;
+}
+
+.sidebar h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.sidebar h2 {
+    margin: 5px 0;
+}
+
+.online {
+    color: #00ff66;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.userList {
+    margin-top: 10px;
+}
+
+.userItem {
+    padding: 15px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    background: #222;
+    color: white;
+    border-radius: 5px; 
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: #ff3b30;
+    color: white;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.userItem:hover {
+    background: #333;
+}
+
+.selectedUser {
+    background: #eeeeee;
+    color: #222222;
+}
+
+.selectedUser h3,
+.selectedUser p {
+    color: #222222;
+}
+
+.userItem h3 {
+    margin: 0;
+}
+
+.userItem p {
+    margin: 5px 0 0;
+    color: #bbb;
+}
+
+.chatArea {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatHeader {
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.chatHeader h1 {
+    margin: 0;
+}
+
+.chatHeader p {
+    margin: 2px 0;
+}
+
+.messages {
+    flex: 1;
+    border: 1px solid #aaa;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    padding: 12px 18px;
+    margin: 6px 0;
+    border-radius: 15px;
+    max-width: 60%;
+    color: #222;
+}
+
+.sent {
+    background: #d9fdd3;
+    align-self: flex-end;
+}
+
+.received {
+    background: #eeeeee;
+    align-self: flex-start;
+}
+
+.inputArea {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+}
+
+.sendButton {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    background: #25d366;
+    color: white;
+    cursor: pointer;
+}
+
+.sendButton:hover {
+    background: #128c7e;
+}
+
+.logoutButton {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: none;
+    border-radius: 6px;
+    background: #dc3545;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.logoutButton:hover {
+    background: #bb2d3b;
+}
