@@ -77,13 +77,17 @@ export default function LoginPage() {
 
     return (
         <div style={{
-            width: "400px",
-            margin: "100px auto"
+            minHeight: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "#111",
+            color: "white"
         }}>
 
             <h1>Login</h1>
 
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} style={{ width: "350px", padding: "30px", background: "#222", borderRadius: "10px" }}>
 
                 <div style={{ marginBottom: "15px" }}>
                     <label>Email</label>
@@ -133,7 +137,13 @@ export default function LoginPage() {
                     type="submit"
                     disabled={loading}
                     style={{
-                        padding: "10px 20px"
+                        width: "100%",
+                        padding: "12px",
+                        background: "#25d366",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer"
                     }}
                 >
                     {loading
@@ -144,7 +154,7 @@ export default function LoginPage() {
 
                 <p>
                     Don't have an account?{" "}
-                    <a href="/register">
+                    <a href="/register" style={{ color: "#25d366", cursor: "pointer" }}>
                         Register
                     </a>
                 </p>
