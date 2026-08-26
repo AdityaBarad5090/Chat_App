@@ -248,11 +248,11 @@ export default function ChatPage() {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${styles.glass} ${styles.gradientBackground}`}>
 
             {/* LEFT SIDEBAR */}
 
-            <div className={styles.sidebar}>
+            <div className={`${styles.sidebar} ${styles.glass}`}>
 
                 <h1>Chat App</h1>
 
@@ -394,7 +394,7 @@ export default function ChatPage() {
 
             {/* CHAT AREA */}
 
-            <div className={styles.chatArea}>
+            <div className={`${styles.chatArea} ${styles.glass}`}>
 
                 {selectedUser ? (
 
@@ -417,7 +417,7 @@ export default function ChatPage() {
 
                         {/* MESSAGES */}
 
-                        <div className={styles.messages}>
+                        <div className={`${styles.messages} ${styles.glass}`}>
 
                             {messages.length === 0 ? (
 
