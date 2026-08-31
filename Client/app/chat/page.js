@@ -310,9 +310,9 @@ export default function ChatPage() {
                                     key={item._id}
 
                                     className={`${styles.userItem} ${selectedUser?._id ===
-                                            item._id
-                                            ? styles.selectedUser
-                                            : ""
+                                        item._id
+                                        ? styles.selectedUser
+                                        : ""
                                         }`}
 
                                     onClick={() => {
@@ -360,18 +360,7 @@ export default function ChatPage() {
 
                                         {notificationCount >
                                             0 && (
-                                                <span
-                                                    style={{
-                                                        background:
-                                                            "red",
-                                                        color:
-                                                            "white",
-                                                        borderRadius:
-                                                            "50%"
-                                                    }}
-                                                >
-                                                    <span className={styles.badge}>{notificationCount}</span>
-                                                </span>
+                                                <span className={styles.badge}>{notificationCount}</span>
                                             )}
 
                                     </div>
@@ -498,36 +487,24 @@ export default function ChatPage() {
                                     styles.sendButton
                                 }
                                 onClick={sendMessage}
-                            >
+                            >  
                                 Send
                             </button>
 
                         </div>
-
                     </>
-
                 ) : (
-
-                    <div
-                        className={
-                            styles.emptyChat
-                        }
-                    >
-
+                    <div className={styles.emptyChat}>
                         <h1>
                             Select a user to start
                             chatting
                         </h1>
-
                         <p>
                             Choose someone from the
                             users list.
                         </p>
-
                     </div>
-
                 )}
-
             </div>
 
         </div>
