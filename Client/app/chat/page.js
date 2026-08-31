@@ -33,7 +33,7 @@ export default function ChatPage() {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/messages/${user.id}/${otherUserId}`
+                `${process.env.NEXT_PUBLIC_API_URL}/api/messages/${user.id}/${otherUserId}`
             );
 
             const data = await response.json();
@@ -200,7 +200,7 @@ export default function ChatPage() {
         const fetchUsers = async () => {
             try {
                 const response = await fetch(
-                    "http://localhost:5000/api/users"
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/users`
                 );
 
                 const data =
@@ -487,7 +487,7 @@ export default function ChatPage() {
                                     styles.sendButton
                                 }
                                 onClick={sendMessage}
-                            >  
+                            >
                                 Send
                             </button>
 
