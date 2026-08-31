@@ -15,6 +15,7 @@ export default function ChatPage() {
     const [messageInput, setMessageInput] = useState("");
 
     const selectedUserRef = useRef(null);
+    const messagesEndRef = useRef(null);
 
     const [notifications, setNotifications] = useState([]);
 
@@ -238,6 +239,12 @@ export default function ChatPage() {
 
     }, []);
 
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
+
     // Loading
     if (!user) {
         return (
@@ -451,6 +458,7 @@ export default function ChatPage() {
                                 })
 
                             )}
+                            <div ref={messagesEndRef} />
 
                         </div>
 
