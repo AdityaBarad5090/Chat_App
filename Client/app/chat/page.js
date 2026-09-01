@@ -259,7 +259,7 @@ export default function ChatPage() {
 
             {/* LEFT SIDEBAR */}
 
-            <div className={styles.sidebar}>
+            <div className={`${styles.sidebar} ${selectedUser ? styles.sidebarHiddenMobile : styles.sidebarActiveMobile}`}>
 
                 <h1>Chat App</h1>
 
@@ -390,7 +390,7 @@ export default function ChatPage() {
 
             {/* CHAT AREA */}
 
-            <div className={styles.chatArea}>
+            <div className={`${styles.chatArea} ${selectedUser ? styles.chatAreaActiveMobile : styles.chatAreaHiddenMobile}`}>
 
                 {selectedUser ? (
 
@@ -400,14 +400,27 @@ export default function ChatPage() {
 
                         <div className={styles.chatHeader}>
 
-                            <h1>
-                                Chat with{" "}
-                                {selectedUser.name}
-                            </h1>
+                            <button
+                                className={styles.backButton}
+                                onClick={() => {
+                                    setSelectedUser(null);
+                                    selectedUserRef.current = null;
+                                }}
+                                aria-label="Back to contact list"
+                            >
+                                ←
+                            </button>
 
-                            <p>
-                                {selectedUser.email}
-                            </p>
+                            <div className={styles.chatHeaderInfo}>
+                                <h1>
+                                    Chat with{" "}
+                                    {selectedUser.name}
+                                </h1>
+
+                                <p>
+                                    {selectedUser.email}
+                                </p>
+                            </div>
 
                         </div>
 

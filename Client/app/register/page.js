@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./page.module.css";
 
 export default function RegisterPage() {
 
@@ -75,127 +76,75 @@ export default function RegisterPage() {
     };
 
     return (
+        <div className={styles.container}>
 
-        <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background: "#111",
-                color: "white"
-            }}
-        >
+            <form onSubmit={handleRegister} className={styles.form}>
 
-            <form
-                onSubmit={handleRegister}
-                style={{
-                    width: "350px",
-                    padding: "30px",
-                    background: "#222",
-                    borderRadius: "10px"
-                }}
-            >
-
-                <h1>
-                    Create Account
-                </h1>
+                <h1>Create Account</h1>
 
                 {error && (
-                    <p
-                        style={{
-                            color: "#ff5555"
-                        }}
-                    >
+                    <p className={styles.error}>
                         {error}
                     </p>
                 )}
 
-                <input
-                    type="text"
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) =>
-                        setName(e.target.value)
-                    }
-                    required
-                    style={{
-                        width: "100%",
-                        padding: "12px",
-                        marginBottom: "15px",
-                        boxSizing: "border-box"
-                    }}
-                />
+                <div className={styles.field}>
+                    <label>Name</label>
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        value={name}
+                        onChange={(e) =>
+                            setName(e.target.value)
+                        }
+                        required
+                        className={styles.input}
+                    />
+                </div>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) =>
-                        setEmail(e.target.value)
-                    }
-                    required
-                    style={{
-                        width: "100%",
-                        padding: "12px",
-                        marginBottom: "15px",
-                        boxSizing: "border-box"
-                    }}
-                />
+                <div className={styles.field}>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) =>
+                            setEmail(e.target.value)
+                        }
+                        required
+                        className={styles.input}
+                    />
+                </div>
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) =>
-                        setPassword(e.target.value)
-                    }
-                    required
-                    style={{
-                        width: "100%",
-                        padding: "12px",
-                        marginBottom: "15px",
-                        boxSizing: "border-box"
-                    }}
-                />
+                <div className={styles.field}>
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) =>
+                            setPassword(e.target.value)
+                        }
+                        required
+                        className={styles.input}
+                    />
+                </div>
 
                 <button
                     type="submit"
                     disabled={loading}
-                    style={{
-                        width: "100%",
-                        padding: "12px",
-                        background: "#25d366",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer"
-                    }}
+                    className={styles.button}
                 >
                     {loading
                         ? "Creating..."
                         : "Register"}
                 </button>
 
-                <p
-                    style={{
-                        marginTop: "20px"
-                    }}
-                >
+                <p>
                     Already have an account?{" "}
-
-                    <span
-                        onClick={() =>
-                            router.push("/login")
-                        }
-                        style={{
-                            color: "#25d366",
-                            cursor: "pointer"
-                        }}
-                    >
+                    <a href="/login" className={styles.link}>
                         Login
-                    </span>
-
+                    </a>
                 </p>
 
             </form>

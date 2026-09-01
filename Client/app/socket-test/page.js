@@ -76,14 +76,14 @@ export default function SocketTest() {
     };
 
     return (
-        <div style={{ padding: "30px" }}>
+        <div style={{ padding: "20px 16px", maxWidth: "600px", margin: "0 auto", boxSizing: "border-box" }}>
 
             <h1>
                 Chat Test
             </h1>
 
             {user && (
-                <p>
+                <p style={{ margin: "12px 0" }}>
                     Logged in as:{" "}
                     <strong>
                         {user.name}
@@ -91,28 +91,31 @@ export default function SocketTest() {
                 </p>
             )}
 
-            <div>
+            <div style={{ margin: "16px 0", minHeight: "100px" }}>
                 {messages.map((item) => (
-                    <p key={item._id}>
+                    <p key={item._id} style={{ margin: "6px 0", wordBreak: "break-word" }}>
                         <strong>
-                            {item.sender.name}:
+                            {item.sender?.name || "User"}:
                         </strong>{" "}
                         {item.message}
                     </p>
                 ))}
             </div>
 
-            <input
-                value={message}
-                onChange={(e) =>
-                    setMessage(e.target.value)
-                }
-                placeholder="Type message..."
-            />
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <input
+                    value={message}
+                    onChange={(e) =>
+                        setMessage(e.target.value)
+                    }
+                    placeholder="Type message..."
+                    style={{ flex: "1 1 200px", padding: "12px", fontSize: "16px", borderRadius: "6px", border: "1px solid #444" }}
+                />
 
-            <button onClick={sendMessage}>
-                Send
-            </button>
+                <button onClick={sendMessage} style={{ padding: "12px 20px", fontSize: "16px", borderRadius: "6px", cursor: "pointer" }}>
+                    Send
+                </button>
+            </div>
 
         </div>
     );
