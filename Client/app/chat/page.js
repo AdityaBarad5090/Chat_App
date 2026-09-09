@@ -19,6 +19,7 @@ export default function ChatPage() {
     const [incomingCall, setIncomingCall] = useState(null);
 
     const localVideoRef = useRef(null);
+    const remoteVideoRef = useRef(null);
     const selectedUserRef = useRef(null);
     const messagesEndRef = useRef(null);
     const peerConnectionRef = useRef(null);
