@@ -123,6 +123,24 @@ const chatSocket = (io) => {
                 socket.id
             );
         });
+
+        socket.on("call_user", ({ receiverId, caller, offer }) => {
+            console.log("Call request:", caller.id, "->", receiverId);
+            console.log("Offer received by server:", offer);
+
+            io.to(receiverId).emit("incoming_call", {
+                caller,
+                offer,
+            });
+        });
+        
+        socket.on("answer_call", ({ callerId, answer }) => {
+            console.log("Answer received from user");
+
+            io.to(callerId).emit("call_answered", {
+                answer,
+            });
+        });
     });
 };
 

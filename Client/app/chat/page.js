@@ -13,9 +13,14 @@ export default function ChatPage() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState("");
+    const [showVideoCall, setShowVideoCall] = useState(false);
+    const [localStream, setLocalStream] = useState(null);
+    const [incomingCall, setIncomingCall] = useState(null);
 
+    const localVideoRef = useRef(null);
     const selectedUserRef = useRef(null);
     const messagesEndRef = useRef(null);
+    const peerConnectionRef = useRef(null);
 
     const [notifications, setNotifications] = useState([]);
 
@@ -23,6 +28,150 @@ export default function ChatPage() {
     const handleLogout = () => {
         localStorage.removeItem("user");
         window.location.href = "/login";
+    };
+
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true,
+            });
+
+            setLocalStream(stream);
+            setShowVideoCall(true);
+
+            console.log("Camera and microphone access granted");
+
+            const peerConnection = createPeerConnection(stream);
+
+            console.log("Peer connection ready:", peerConnection);
+
+        } catch (error) {
+            console.error("Camera/microphone access error:", error);
+        }
+    };
+
+    const createPeerConnection = (stream) => {
+        const peerConnection = new RTCPeerConnection({
+            iceServers: [
+                {
+                    urls: "stun:stun.l.google.com:19302"
+                }
+            ]
+        });
+
+        stream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, stream);
+        });
+
+        peerConnectionRef.current = peerConnection;
+
+        console.log("RTCPeerConnection created");
+        console.log("Local tracks added:", stream.getTracks());
+
+        return peerConnection;
+    };
+
+    const callUser = async () => {
+        if (!selectedUser) {
+            console.log("No user selected");
+            return;
+        }
+
+        if (!user) {
+            console.log("User not available");
+            return;
+        }
+
+        if (!peerConnectionRef.current) {
+            console.log("Peer connection not available");
+            return;
+        }
+
+        try {
+            // Create WebRTC offer
+            const offer = await peerConnectionRef.current.createOffer();
+
+            console.log("Offer created:", offer);
+
+            // Save offer as local description
+            await peerConnectionRef.current.setLocalDescription(offer);
+
+            console.log("Local description set");
+
+            // Send offer to the other user
+            socket.emit("call_user", {
+                receiverId: selectedUser._id,
+                caller: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                },
+                offer: offer,
+            });
+
+            console.log("Offer sent to:", selectedUser.name);
+
+        } catch (error) {
+            console.error("Create offer error:", error);
+        }
+    };
+
+    const acceptCall = async () => {
+        try {
+            console.log("Call accepted");
+
+            if (!incomingCall?.offer) {
+                console.log("No offer received");
+                return;
+            }
+
+            // Start camera and microphone
+            await startCamera();
+
+            const peerConnection = peerConnectionRef.current;
+
+            if (!peerConnection) {
+                console.log("Peer connection not available");
+                return;
+            }
+
+            // Set caller's offer as remote description
+            await peerConnection.setRemoteDescription(
+                new RTCSessionDescription(incomingCall.offer)
+            );
+
+            console.log("Remote offer set");
+
+            // Create answer
+            const answer = await peerConnection.createAnswer();
+
+            console.log("Answer created:", answer);
+
+            // Save answer as local description
+            await peerConnection.setLocalDescription(answer);
+
+            console.log("Local description set for answer");
+
+            // Send answer back to caller
+            socket.emit("answer_call", {
+                callerId: incomingCall.caller.id,
+                answer: answer,
+            });
+
+            console.log("Answer sent to caller");
+
+            setIncomingCall(null);
+
+        } catch (error) {
+            console.error("Accept call error:", error);
+        }
+    };
+
+    const rejectCall = () => {
+        console.log("Call rejected");
+
+        setIncomingCall(null);
     };
 
     // Load messages between logged-in user and selected user
@@ -192,6 +341,36 @@ export default function ChatPage() {
             });
         });
 
+        socket.on("incoming_call", (data) => {
+            console.log("Incoming call from:", data.caller);
+            console.log("Incoming offer:", data.offer);
+
+            setIncomingCall({
+                caller: data.caller,
+                offer: data.offer,
+            });
+        });
+
+        socket.on("call_answered", async (data) => {
+            try {
+                console.log("Call answered");
+
+                if (!peerConnectionRef.current) {
+                    console.log("Peer connection not available");
+                    return;
+                }
+
+                await peerConnectionRef.current.setRemoteDescription(
+                    new RTCSessionDescription(data.answer)
+                );
+
+                console.log("Remote answer set");
+
+            } catch (error) {
+                console.error("Set remote answer error:", error);
+            }
+        });
+
         // Socket disconnected
         socket.on("disconnect", () => {
             setConnected(false);
@@ -234,10 +413,19 @@ export default function ChatPage() {
             socket.off("connect");
             socket.off("disconnect");
             socket.off("receive_message");
+            socket.off("incoming_call");
+            socket.off("call_answered");
             socket.disconnect();
         };
 
     }, []);
+
+    useEffect(() => {
+        if (localVideoRef.current && localStream) {
+            localVideoRef.current.srcObject = localStream;
+        }
+    }, [localStream]);
+
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -256,6 +444,34 @@ export default function ChatPage() {
 
     return (
         <div className={styles.container}>
+
+            {incomingCall && (
+                <div className={styles.incomingCall}>
+                    <div className={styles.incomingCallBox}>
+                        <h2>📹 Incoming Video Call</h2>
+
+                        <p>
+                            {incomingCall.caller.name} is calling you
+                        </p>
+
+                        <div className={styles.callButtons}>
+                            <button
+                                className={styles.acceptCallButton}
+                                onClick={acceptCall}
+                            >
+                                Accept
+                            </button>
+
+                            <button
+                                className={styles.rejectCallButton}
+                                onClick={rejectCall}
+                            >
+                                Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* LEFT SIDEBAR */}
 
@@ -422,7 +638,31 @@ export default function ChatPage() {
                                 </p>
                             </div>
 
+                            {/* Video Call Button */}
+                            <button
+                                className={styles.videoCallButton}
+                                onClick={async () => {
+                                    await startCamera();
+                                    await callUser();
+                                }}
+                                title="Start video call"
+                                aria-label="Start video call"
+                            >
+                                📹
+                            </button>
+
                         </div>
+                        {showVideoCall && (
+                            <div className={styles.videoCallContainer}>
+                                <video
+                                    ref={localVideoRef}
+                                    autoPlay
+                                    playsInline
+                                    muted
+                                    className={styles.localVideo}
+                                />
+                            </div>
+                        )}
 
                         {/* MESSAGES */}
 
