@@ -10,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     const user = getUser();
     if (user) {
-      router.replace("/chat");
+      router.replace("/chat"); 
     } else {
       router.replace("/login");
     }

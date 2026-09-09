@@ -446,6 +446,26 @@
     opacity: 0.85;
 }
 
+.remoteVideo {
+    width: 100%;
+    height: 400px;
+    display: block;
+    object-fit: cover;
+    background: #000;
+}
+
+.localVideo {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    width: 150px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid white;
+    z-index: 2;
+}
+
 /* MOBILE RESPONSIVE STYLES */
 @media (max-width: 768px) {
     .sidebar {

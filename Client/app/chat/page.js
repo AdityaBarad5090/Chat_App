@@ -15,6 +15,7 @@ export default function ChatPage() {
     const [messageInput, setMessageInput] = useState("");
     const [showVideoCall, setShowVideoCall] = useState(false);
     const [localStream, setLocalStream] = useState(null);
+    const [remoteStream, setRemoteStream] = useState(null);
     const [incomingCall, setIncomingCall] = useState(null);
 
     const localVideoRef = useRef(null);
@@ -30,7 +31,7 @@ export default function ChatPage() {
         window.location.href = "/login";
     };
 
-    const startCamera = async () => {
+    const startCamera = async (remoteUserId) => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
@@ -42,7 +43,7 @@ export default function ChatPage() {
 
             console.log("Camera and microphone access granted");
 
-            const peerConnection = createPeerConnection(stream);
+            const peerConnection = createPeerConnection(stream, remoteUserId);
 
             console.log("Peer connection ready:", peerConnection);
 
@@ -51,7 +52,7 @@ export default function ChatPage() {
         }
     };
 
-    const createPeerConnection = (stream) => {
+    const createPeerConnection = (stream, remoteUserId) => {
         const peerConnection = new RTCPeerConnection({
             iceServers: [
                 {
@@ -60,9 +61,33 @@ export default function ChatPage() {
             ]
         });
 
+        // Add local audio/video tracks
         stream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, stream);
         });
+
+        // Send ICE candidates to the other user
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit("ice_candidate", {
+                    receiverId: remoteUserId,
+                    candidate: event.candidate,
+                });
+
+                console.log("ICE candidate sent");
+            }
+        };
+
+        // Receive remote audio/video
+        peerConnection.ontrack = (event) => {
+            console.log("Remote track received");
+
+            const [remoteStream] = event.streams;
+
+            if (remoteStream) {
+                setRemoteStream(remoteStream);
+            }
+        };
 
         peerConnectionRef.current = peerConnection;
 
@@ -127,7 +152,7 @@ export default function ChatPage() {
             }
 
             // Start camera and microphone
-            await startCamera();
+            await startCamera(incomingCall.caller.id);
 
             const peerConnection = peerConnectionRef.current;
 
@@ -371,6 +396,23 @@ export default function ChatPage() {
             }
         });
 
+        socket.on("ice_candidate", async ({ candidate }) => {
+            try {
+                if (!peerConnectionRef.current || !candidate) {
+                    return;
+                }
+
+                await peerConnectionRef.current.addIceCandidate(
+                    new RTCIceCandidate(candidate)
+                );
+
+                console.log("ICE candidate added");
+
+            } catch (error) {
+                console.error("Add ICE candidate error:", error);
+            }
+        });
+
         // Socket disconnected
         socket.on("disconnect", () => {
             setConnected(false);
@@ -415,17 +457,17 @@ export default function ChatPage() {
             socket.off("receive_message");
             socket.off("incoming_call");
             socket.off("call_answered");
+            socket.off("ice_candidate");
             socket.disconnect();
         };
 
     }, []);
 
     useEffect(() => {
-        if (localVideoRef.current && localStream) {
-            localVideoRef.current.srcObject = localStream;
+        if (remoteVideoRef.current && remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
         }
-    }, [localStream]);
-
+    }, [remoteStream]);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -642,7 +684,7 @@ export default function ChatPage() {
                             <button
                                 className={styles.videoCallButton}
                                 onClick={async () => {
-                                    await startCamera();
+                                    await startCamera(selectedUser._id);
                                     await callUser();
                                 }}
                                 title="Start video call"
@@ -654,6 +696,14 @@ export default function ChatPage() {
                         </div>
                         {showVideoCall && (
                             <div className={styles.videoCallContainer}>
+
+                                <video
+                                    ref={remoteVideoRef}
+                                    autoPlay
+                                    playsInline
+                                    className={styles.remoteVideo}
+                                />
+
                                 <video
                                     ref={localVideoRef}
                                     autoPlay
@@ -661,6 +711,7 @@ export default function ChatPage() {
                                     muted
                                     className={styles.localVideo}
                                 />
+
                             </div>
                         )}
 

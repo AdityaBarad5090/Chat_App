@@ -133,12 +133,20 @@ const chatSocket = (io) => {
                 offer,
             });
         });
-        
+
         socket.on("answer_call", ({ callerId, answer }) => {
             console.log("Answer received from user");
 
             io.to(callerId).emit("call_answered", {
                 answer,
+            });
+        });
+
+        socket.on("ice_candidate", ({ receiverId, candidate }) => {
+            console.log("ICE candidate received");
+
+            io.to(receiverId).emit("ice_candidate", {
+                candidate,
             });
         });
     });
